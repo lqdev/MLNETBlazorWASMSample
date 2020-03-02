@@ -1,0 +1,50 @@
+@page "/prediction"
+@inject HttpClient _client
+
+<label>Sepal Length: </label>
+<input type="text" @bind="_sepalLength"><br>
+<label>Sepal Width: </label>
+<input type="text" @bind="_sepalWidth"><br>
+<label>Petal Length: </label>
+<input type="text" @bind="_petalLength"><br>
+<label>Petal Width: </label>
+<input type="text" @bind="_petalWidth"><br>
+<button @onclick="GetPrediction">Make prediction</button>
+@if(@ModelPrediction == null)
+{
+    <p>Enter data to get a prediction</p>
+} else
+{
+    <p>@ModelPrediction</p>
+}
+
+
+@code {
+    private PredictionEngine<ModelInput,ModelOutput> _predictionEngine;
+    private string _sepalLength, _sepalWidth, _petalLength, _petalWidth, ModelPrediction;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Stream savedModel = await _client.GetStreamAsync("https://mlnetblazorwasmstorage.blob.core.windows.net/models/model.zip");
+        MLContext mlContext = new MLContext();
+        ITransformer _model = mlContext.Model.Load(savedModel,out DataViewSchema schema);
+        _predictionEngine = mlContext.Model.CreatePredictionEngine<ModelInput,ModelOutput>(_model);
+    }
+
+    private void GetPrediction()
+    {
+        ModelInput input = new ModelInput
+        {
+            SepalLength=float.Parse(_sepalLength),
+            SepalWidth=float.Parse(_sepalWidth),
+            PetalLength=float.Parse(_petalLength),
+            PetalWidth=float.Parse(_petalWidth)
+        };
+
+        ModelOutput prediction = _predictionEngine.Predict(input);
+
+        ModelPrediction = prediction.PredictedLabel;
+    }
+
+    
+}
