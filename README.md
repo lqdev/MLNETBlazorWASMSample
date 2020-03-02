@@ -2,6 +2,8 @@
 
 This application trains a multiclass classification model to predict iris flower types and deploys the model alongside a Blazor WebAssembly static website.
 
+For more details, see the accompanying blog post [Deploy ML.NET Machine Learning Model in Blazor WebAssembly Static Website](http://luisquintanilla.me/2020/03/01/deploy-machine-learning-mlnet-models-blazor-webassembly/).
+
 ## Prerequisites
 
 This project was built on a Windows PC but should work cross platform on Mac and Linux.
